@@ -1,5 +1,7 @@
 .vs
 .idea
+out
+*.txt
 
 # Prerequisites
 *.d
