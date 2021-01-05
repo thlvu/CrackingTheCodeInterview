@@ -1,7 +1,9 @@
 .vs
+.vscode
+*.dSYM
 .idea
-out
 *.txt
+*[^.]
 
 # Prerequisites
 *.d

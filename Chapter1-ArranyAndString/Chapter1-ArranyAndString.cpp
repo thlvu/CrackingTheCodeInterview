@@ -8,13 +8,13 @@ using namespace std;
 bool isUniqueByMap(string s)
 {
 	unordered_map<char, bool> cmap;
-
-	for (auto c : s) {
-		if (cmap.find(c) != cmap.end())
+	
+	for (int i = 0; i < s.length(); ++i) {
+		if (cmap.find(s[i]) != cmap.end())
 		{
 			return false;
 		}
-		cmap[c] = true;
+		cmap[s[i]] = true;
 	}
 	return true;
 }
@@ -54,21 +54,21 @@ bool checkPermutation(string s1, string s2)
 	}
 
 	unordered_map<char, int> cmap;
-	for (auto c : s1)
+	for (int i = 0; i < s1.length(); ++i)
 	{
-		if (cmap.find(c) == cmap.end())
+		if (cmap.find(s1[i]) == cmap.end())
 		{
-			cmap[c] = 0;
+			cmap[s1[i]] = 0;
 		}
-		++cmap[c];
+		++cmap[s1[i]];
 	}
-	for (auto c : s2)
+	for (int i = 0; i < s2.length(); ++i)
 	{
-		if (cmap.find(c) == cmap.end())
+		if (cmap.find(s2[i]) == cmap.end())
 		{
 			return false;
 		}
-		--cmap[c];
+		--cmap[s2[i]];
 	}
 
 	unordered_map<char, int>::iterator it = cmap.begin();
@@ -100,4 +100,5 @@ int main()
 {
 	cout << checkPermutation("abcwerw", "ewwrcab") << endl;
 	cout << checkPermutation("abcwerwb", "ewwrcabw") << endl;
+	return 0;
 }
