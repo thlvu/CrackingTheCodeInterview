@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <algorithm>
 #include <unordered_map>
+#include <cctype>
 using namespace std;
 
 
@@ -95,10 +96,115 @@ bool checkPermutation(string s1, string s2)
 */
 
 
+string urlify(string s)
+{
+	string us;
+	bool continued = false;
+
+	for (int i = 0; i < s.length(); ++i)
+	{
+		char c = s[i];
+		if (c != ' ')
+		{
+			us.push_back(c);
+			continued = false;
+		}
+		else if (!continued)
+		{
+			us.append("%20");
+			continued = true;
+		}
+	}
+	if (us.length() > 2 && us.substr(us.length()-3, 3) == "%20")
+	{
+		us = us.substr(0, us.length() - 3);
+	}
+	if (us.length() > 2 && us.substr(0, 3) == "%20")
+	{
+		us = us.substr(3, us.length());
+	}
+
+	return us;
+}
+
+
+/* urlify - Way solution describes.
+* 1. Assuming start with non-space character.
+* 2. Assuming spaces between characters cannot be continued.
+* 3. Find true length of string, the end of last non-space character.
+* 4. Count spaces.
+* 5. Set index = true length + 2*spaces
+* 6. For loop reversely,
+* 		- If character is space, then set "%20" at index - 1 ~ index - 3, then index -= 3
+		- Else set a given character at index-1, then index -= 1
+*/
+
+
+
+// Assume s is composed of only spaces and english alphabets.
+bool palindromePermutation(string s)
+{
+	unordered_map<char, int> cmap;
+
+	for (int i = 0; i < s.length(); ++i)
+	{
+		char c = s[i];
+		if (c == ' ')
+		{
+			continue;
+		}
+
+		c = tolower(c);
+		if (cmap.find(c) == cmap.end())
+		{
+			cmap[c] = 0;
+		}
+		++cmap[c];
+	}
+
+	int numOdd = 0;
+	unordered_map<char, int>::iterator it = cmap.begin();
+	while (it != cmap.end())
+	{
+		if (it->second % 2) 
+		{
+			++numOdd;
+		}
+		if (numOdd > 1)
+		{
+			return false;
+		}
+		++it;
+	}
+	return true;
+}
+
+
+/* palindromePermutation - Way solution describes.
+* 3 Ways are described.
+* Way1 is same for my way except using fixed size int array.
+* Way2 is similar but it calculates the number of odds while updating int array. 
+*	Thus the number of odds might fluctuate.
+* Way3 uses bit vector. Counts is not important. Odd or even is important.
+	Bit vector can be utilized to record count is odd or even.
+	Then we know that if palindrome, all bits are 0 or only one bit is 1.
+	Let x be a bit vector. Assume it is big endian. 
+	Then we can expect that (x-1) & x == 0 if palindrome.
+		This is because if all bits are 0, this is obvious.
+		If only one bit is 1, x-1 makes this bit to 0 and changing following bit to 1. So & operation results in 0.
+		If more than two bits are 1, x-1 toggle only following bits after small bit. (e,g. 1000100 >> 1000011)
+		So & operation keeps leading 1 bit and the result cannot be 0.
+*/
+
 
 int main()
 {
 	cout << checkPermutation("abcwerw", "ewwrcab") << endl;
 	cout << checkPermutation("abcwerwb", "ewwrcabw") << endl;
+	cout << urlify(" Mr John   Smith      ") << endl;
+	cout << urlify("  ") << endl;
+	cout << palindromePermutation("Tact Coa") << endl;
+	cout << palindromePermutation("Tact Coaa") << endl;
+	cout << palindromePermutation("Tact oCoa") << endl;
 	return 0;
 }
