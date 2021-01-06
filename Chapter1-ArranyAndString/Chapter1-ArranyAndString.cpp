@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <cctype>
+#include <vector>
 using namespace std;
 
 
@@ -197,14 +198,92 @@ bool palindromePermutation(string s)
 */
 
 
+// Assume all characters are lowercase english and not empty.
+bool oneAway(string s1, string s2)
+{
+	int sz1 = s1.length(), sz2 = s2.length();
+	if (abs(sz1 - sz2) > 1) {
+		return false;
+	}
+	if (sz1 == sz2)
+	{
+		int numSkip = 0;
+		for (int i = 0; i < sz1; ++i)
+		{
+			if (s1[i] != s2[i])
+			{
+				if (++numSkip > 1)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	string sLong, sShort;
+	int szLong, szShort;
+	if (sz1 > sz2)
+	{
+		sLong = s1;
+		sShort = s2;
+		szLong = sz1;
+		szShort = sz2;
+	}
+	else
+	{
+		sLong = s2;
+		sShort = s1;
+		szLong = sz2;
+		szShort = sz1;
+	}
+
+	int iLong = 0, iShort = 0, numSkip = 0;
+	while (iLong < szLong)
+	{
+		if (iShort == szShort)
+		{
+			return true;
+		}
+		else if (sLong[iLong] == sShort[iShort])
+		{
+			++iLong;
+			++iShort;
+		}
+		else
+		{
+			++iLong;
+			if (++numSkip > 1)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+
+/* oneAway - Way solution describes.
+* The way suggested is same with that I implemented.
+* However way in the book goes further in one step 
+* with suggesting merging replacement loop and removal loop.
+* In a merged loop, check length of strings and do something. (removal or replacement)
+*/
+
+
 int main()
 {
-	cout << checkPermutation("abcwerw", "ewwrcab") << endl;
-	cout << checkPermutation("abcwerwb", "ewwrcabw") << endl;
-	cout << urlify(" Mr John   Smith      ") << endl;
-	cout << urlify("  ") << endl;
-	cout << palindromePermutation("Tact Coa") << endl;
-	cout << palindromePermutation("Tact Coaa") << endl;
-	cout << palindromePermutation("Tact oCoa") << endl;
+	cout << "Check Permutation1: " << checkPermutation("abcwerw", "ewwrcab") << endl;
+	cout << "Check Permutation2: " << checkPermutation("abcwerwb", "ewwrcabw") << endl;
+	cout << "Urlify1: " << urlify(" Mr John   Smith      ") << endl;
+	cout << "Urlify2: " << urlify("  ") << endl;
+	cout << "palindromePermutation1: " << palindromePermutation("Tact Coa") << endl;
+	cout << "palindromePermutation2: " << palindromePermutation("Tact Coaa") << endl;
+	cout << "palindromePermutation3: " << palindromePermutation("Tact oCoa") << endl;
+	cout << "oneAway1: " << oneAway("pale", "ple") << endl;
+	cout << "oneAway2: " << oneAway("pales", "pale") << endl;
+	cout << "oneAway3: " << oneAway("pale", "bale") << endl;
+	cout << "oneAway4: " << oneAway("pale", "bake") << endl;
+	cout << "oneAway5: " << oneAway("pales", "pal") << endl;
 	return 0;
 }
