@@ -271,6 +271,96 @@ bool oneAway(string s1, string s2)
 */
 
 
+string stringCompression(string s)
+{
+	string cs;
+	int lenS = s.length();
+	
+	char c = s[0];
+	int n = 0, i = 0;
+	while (i <= lenS)
+	{
+		if (i == lenS || s[i] != c)
+		{
+			cs.push_back(c);
+			cs.append(to_string(n));
+			if (cs.length() >= lenS)
+			{
+				return s;
+			}
+			if (i == lenS)
+			{
+				return cs;
+			}
+			else
+			{
+				c = s[i];
+				n = 1;
+			}
+		}
+		else
+		{
+			++n;
+		}
+		++i;
+	}
+	return cs;
+}
+
+
+/* stringCompression - Way solution describes.
+* The way suggested is same with that I implemented.
+* The difference is that my implementation integrated 
+*	making compressed string and comparing length of two strings in a loop,
+*	while codes suggested is splitting this method.
+*	One cannot be more efficient than the other.
+*/
+
+
+void printMatrix(vector<vector<char>> m, int n)
+{
+	printf("\n");
+	for (int i = 0; i < n; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			printf("%d ", m[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+
+vector<vector<char>> rotateMatrix(vector<vector<char>> &m)
+{
+	int n = m.size();
+	int d = (n + 1) / 2;
+
+	for(int l = 0; l < d; ++l)
+	{
+		for (int i = 0; i < n - 1 - 2*l; ++i)
+		{
+			char a = m[l][l+i];
+			char b = m[l+i][n-1-l];
+			char c = m[n-1-l][n-1-l-i];
+			char d = m[n-1-l-i][l];
+
+			m[n-1-l-i][l] = a;
+			m[n-1-l][n-1-l-i] = d;
+			m[l+i][n-1-l] = c;
+			m[l][l+i] = b;
+		}
+	}
+	return m;
+}
+
+
+/* rotateMatrix - Way solution describes.
+* The way suggested is same with that I implemented.
+*/
+
+
 int main()
 {
 	cout << "Check Permutation1: " << checkPermutation("abcwerw", "ewwrcab") << endl;
@@ -285,5 +375,30 @@ int main()
 	cout << "oneAway3: " << oneAway("pale", "bale") << endl;
 	cout << "oneAway4: " << oneAway("pale", "bake") << endl;
 	cout << "oneAway5: " << oneAway("pales", "pal") << endl;
+	cout << "stringCompression1: " << stringCompression("aabcccccaaa") << endl;
+	cout << "stringCompression2: " << stringCompression("aabcca") << endl;
+	
+	vector<vector<char>> m1 = { 
+		{ 1, 2, 3, 4, 5 }, 
+		{ 6, 7, 8, 9, 10}, 
+		{ 11, 12, 13, 14, 15}, 
+		{ 16, 17, 18, 19, 20}, 
+		{ 21, 22, 23, 24, 25},
+	};
+	printMatrix(m1, 5);
+	printMatrix(rotateMatrix(m1), 5);
+
+	vector<vector<char>> m2 = { 
+		{ 1, 2, 3, 4, 5, -1}, 
+		{ 6, 7, 8, 9, 10, -2}, 
+		{ 11, 12, 13, 14, 15, -3}, 
+		{ 16, 17, 18, 19, 20, -4}, 
+		{ 21, 22, 23, 24, 25, -5},
+		{ -6, -7, -8, -9, -10, 0},
+	};
+	printMatrix(m2, 6);
+	printMatrix(rotateMatrix(m2), 6);
+
+
 	return 0;
 }
