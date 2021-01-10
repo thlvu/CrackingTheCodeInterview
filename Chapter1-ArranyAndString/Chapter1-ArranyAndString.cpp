@@ -332,6 +332,21 @@ void printMatrix(vector<vector<char>> m, int n)
 }
 
 
+void printMatrix(vector<vector<int>> m)
+{
+	printf("\n");
+	for (int i = 0; i < m.size(); ++i)
+	{
+		for (int j = 0; j < m[0].size(); ++j)
+		{
+			printf("%d ", m[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+
 vector<vector<char>> rotateMatrix(vector<vector<char>> &m)
 {
 	int n = m.size();
@@ -358,6 +373,70 @@ vector<vector<char>> rotateMatrix(vector<vector<char>> &m)
 
 /* rotateMatrix - Way solution describes.
 * The way suggested is same with that I implemented.
+*/
+
+
+vector<vector<int>> zeroMatrix(vector<vector<int>> &matrix)
+{
+	int m = matrix.size(), n = matrix[0].size();
+	vector<pair<int,int>> ps;
+
+	for (int i = 0; i < m; ++i)
+	{
+		for (int j = 0; j < n; ++j)
+		{
+			if (matrix[i][j] == 0)
+			{
+				ps.push_back(pair<int,int>(i, j));
+			}
+		}
+	}
+	for (auto p : ps)
+	{
+		int r = p.first, c = p.second;
+		for (int j = 0; j < n; ++j)
+		{
+			matrix[r][j] = 0;
+		}
+		for (int i = 0; i < m; ++ i)
+		{
+			matrix[i][c] = 0;
+		}
+	}
+	return matrix;
+}
+
+
+/* zeroMatrix - Way solution describes.
+* The way suggested keeps row indices of zeros and column indices of zeros, respectively.
+* This is more space efficient than saving pair of row index and column index of zero 
+* when there are many zeros so that there are duplicated row index or column index.
+*/
+
+
+bool isSubstring(string s1, string s2)
+{
+	int sz1 = s1.length(), sz2 = s2.length();
+	for (int i = 0; i < sz1 - sz2 + 1; ++i)
+	{
+		if (s1.substr(i, sz2) == s2)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool stringRotation(string s1, string s2)
+{
+	string ss = s1 + s1;
+	return isSubstring(ss, s2);
+}
+
+
+/* stringRotation - Way solution describes.
+* The way suggested is same with my implementation.
 */
 
 
@@ -399,6 +478,17 @@ int main()
 	printMatrix(m2, 6);
 	printMatrix(rotateMatrix(m2), 6);
 
+	vector<vector<int>> m3 = { 
+		{ 1, 2, 3, 4, 5, -1}, 
+		{ 6, 7, 8, 9, 10, -2}, 
+		{ 11, 12, 0, 14, 0, -3}, 
+		{ 0, 17, 18, 19, 20, -4}, 
+		{ 21, 22, 23, 24, 25, -5},
+		{ -6, -7, -8, -9, -10, 0},
+	};
+	m3 = zeroMatrix(m3);
+	printMatrix(m3);
+	cout << stringRotation("watterbottle", "erbottlewat") << endl;
 
 	return 0;
 }
