@@ -3,10 +3,6 @@
 *.dSYM
 .idea
 *.txt
-<<<<<<< HEAD
-*[^.]
-=======
->>>>>>> 582ea3545372db2b579aedfc8b5998d8aa124ff2
 
 # Prerequisites
 *.d
