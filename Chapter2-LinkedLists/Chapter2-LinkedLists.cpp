@@ -22,8 +22,9 @@ Node* makeLL(vector<int> &vec)
     
     Node* tail = head;
 
-    for (auto e : vec)
+    for (int i = 0; i < vec.size(); ++i)
     {
+        int e = vec[i];
         Node* newTail = (Node*) malloc(sizeof(Node));
         newTail->data = e;
         newTail->next = nullptr;
@@ -179,12 +180,100 @@ Node* returnKthToLast(Node* head, int k)
 This is same to my implementation.
 */
 
+
+void deleteMiddleNode(Node* head)
+{
+    if (head == nullptr) return;
+    if (head->next == nullptr) return;
+    if (head->next->next == nullptr) return;
+
+    Node* tNode = head;
+    int sz = 0;
+    while (tNode != nullptr)
+    {
+        tNode = tNode->next;
+        sz++;
+    }
+
+    tNode = head;
+    sz = sz / 2;
+    
+    for (int i = 0; i < sz; ++i)
+    {
+        tNode = tNode->next;
+    }
+    Node* delNode = tNode->next;
+    tNode->next = tNode->next->next;
+    free(delNode);
+}
+
+int partition(Node* head, int x, int np)
+{
+    if (head == nullptr) return np;
+    if (head->next == nullptr) return np;
+    if (head->next->next == nullptr) return np;
+
+    Node* n1 = head->next;
+    Node* n2 = head->next->next;
+
+    if (n1->data >= x && n2->data < x)
+    {
+        n1->next = n2->next;
+        n2->next = n1;
+        head->next = n2;
+        np++;
+    }
+    return partition(head->next, x, np);
+}
+
+
+/* Delete Middle Node Solution.
+* The solution assumed that node that will be deleted is given, not the head.
+* Delete this node is impossible because we have no access to the previous node.
+* So solution suggest copy data and next from next node of a given node.
+* By doing this, node is survived, but accessing node works loooks like that node deleted.
+*/
+
+
+Node* partition(Node* head, int x)
+{
+    Node* pHead = (Node*) malloc(sizeof(Node));
+    pHead->data = 0;
+    pHead->next = head;
+
+    int c = 1;
+    while (c != 0)
+    {
+        c = partition(pHead, x, 0);
+    }
+
+    return pHead->next;
+}
+
+/* Partition's solution
+* First solution suggests make front linked list and rear linked list.
+* Then, concatenate it.
+* Second solution is similar, but make front linked list in reversed order,
+* ===
+    Node head = node;
+    ...
+    if (node.data < x)
+    {
+        node.next = head;
+        head = node;
+    }
+    ...
+* ===
+* By doing so, we can remove local variables to track first node and last node of each list.    
+*/
+
 int main(void)
 {
-    int arr[] = { 1, 1, 3, 3, 5, 3, 2, 2, 5, 5, 5, 5, -1, 2, 0, 3};
+    int arr[16] = { 1, 1, 3, 3, 5, 3, 2, 2, 5, 5, 5, 5, -1, 2, 0, 3};
     vector<int> vec;
-    for (auto e : arr)
+    for (int i = 0; i < 16; ++i)
     {
+        int e = arr[i];
         vec.push_back(e);
     }
     Node* ll1 = makeLL(vec);
@@ -211,5 +300,17 @@ int main(void)
     printf("\n(K: %d, data: %d)", 7, ll2_k7->data);
     printf("\n(K: %d, data: %d)", 1, ll2_k1->data);
     
+    Node* ll3 = makeLL(vec);
+    printLL(ll3);
+
+    deleteMiddleNode(ll3);
+    printLL(ll3);
+
+    Node* ll4 = makeLL(vec);
+    printLL(ll4);
+
+    ll4 = partition(ll4, 3);
+    printLL(ll4);
+
     return 0;
 }
