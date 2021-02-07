@@ -92,6 +92,15 @@ int size(Node* head)
     return sz;
 }
 
+Node* getTail(Node* head)
+{
+    while (head != nullptr)
+    {
+        if (head->next == nullptr) return head;
+    }
+    return nullptr;
+}
+
 Node* pad(Node* head, int pad, int data) {
     if (pad == 0)
     {
@@ -108,6 +117,14 @@ Node* pad(Node* head, int pad, int data) {
     }
     node->next = head;
     return nhead;
+}
+
+Node* cut(Node* head, int cut)
+{
+    for (int i = 0; i < cut; ++i)
+        { head = head->next; }
+
+    return head;
 }
 
 Node* stackPut(Node* head, int newData)
@@ -544,19 +561,9 @@ Node* intersection(Node* l1, Node* l2)
     int sz1 = size(l1);
     int sz2 = size(l2);
 
-    Node* shead;
-    Node* lhead;
+    Node* shead = sz1 > sz2 ? l2 : l1;
+    Node* lhead = sz1 > sz2 ? l1 : l2;
 
-    if (sz1 > sz2)
-    {
-        shead = l2;
-        lhead = l1;
-    }
-    else
-    {
-        shead = l1;
-        lhead = l2;
-    }
     while (shead != nullptr)
     {
         map[shead] = true;
@@ -573,6 +580,31 @@ Node* intersection(Node* l1, Node* l2)
     return nullptr;
 }
 
+Node* inter2(Node* l1, Node* l2)
+{
+    if (l1->next == nullptr)
+    {
+        if (l1 == l2) { return l1; }
+        else { return nullptr; }
+    }
+    Node* nn = inter2(l1->next, l2->next);
+    if (l1 == l2) { return l1; }
+    else { return nn; }
+}
+
+
+Node* intersection2(Node* l1, Node* l2)
+{
+    int sz1 = size(l1);
+    int sz2 = size(l2);
+
+    if (sz1 > sz2)
+    { l1 = cut(l1, sz1 - sz2); }
+    else
+    { l2 = cut(l2, sz2 - sz1); }
+
+    return inter2(l1, l2);
+}
 
 Node* loopDetection(Node* head)
 {
@@ -591,7 +623,7 @@ Node* loopDetection(Node* head)
     fast = head;
     while (fast != slow)
     {
-        
+
         slow = slow->next;
         fast = fast->next;
     }
@@ -718,16 +750,16 @@ int main(void)
     h4->next = h5;
     h12->next = h22;
     h22->next = h32;
-    h32->next = h4;
+    h32->next = h3;
 
-    Node* inode = intersection(h1, h12);
+    Node* inode = intersection2(h1, h12);
     printf("\nIntersection: %d", inode->data);
 
     h1->next = h2;
     h2->next = h3;
     h3->next = h4;
     h4->next = h5;
-    h5->next = h3;
+    h5->next = h2;
 
     Node* cnode = loopDetection(h1);
     printf("\nCircular Node: %d", cnode->data);
