@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <limits>
+#include <string>
 
 using namespace std;
 
@@ -316,6 +318,138 @@ public:
     - Then peak or pop again.
 */
 
+void sortStack(Stack & target, Stack & help)
+{
+    if (target.empty())
+    {
+        while (!help.empty())
+        {
+            target.push(help.peak());
+            help.pop();
+        }
+        return;
+    }
+
+    int data = target.peak();
+    target.pop();
+
+    if (help.empty())
+    {
+        help.push(data);
+    }
+    else
+    {
+        int n = 0;
+        while (!help.empty() && help.peak() > data)
+        {
+            ++n;
+            target.push(help.peak());
+            help.pop();
+        }
+        help.push(data);
+
+        for (int i = 0; i < n; ++i)
+        {
+            help.push(target.peak());
+            target.pop();
+        }
+    }
+    return sortStack(target, help);
+}
+
+/* Sort Stack - solution in the book.
+    The solution is same to my implementation except that it does not re-back popped items.
+    These items are re-backed naturally according to its implementation.
+
+    Time Complexity: O(N^2)
+    Memory Space: O(N)
+
+    And if we can use two extra stacks, it is possible to implement merge sort and quick sort,
+    which is faster but consume more memory.
+*/
+
+struct Animal
+{
+    string name;
+    bool cat;
+};
+
+Animal makeAnimal(string name, bool cat)
+{
+    struct Animal animal;
+    animal.name = name;
+    animal.cat = cat;
+
+    return animal;
+}
+
+struct AnimalNode
+{
+    Animal animal;
+    int num;
+    AnimalNode* next;
+};
+
+class AnimalQueue
+{
+public:
+    int num = 0;
+    AnimalNode* dogFirst = nullptr;
+    AnimalNode* dogLast = dogFirst;
+    AnimalNode* catFirst = nullptr;
+    AnimalNode* catLast = catFirst;
+
+    void enqueue(Animal animal)
+    {
+        AnimalNode* animalNode = (AnimalNode*) malloc(sizeof(AnimalNode));
+        animalNode->animal = animal;
+        animalNode->num = num++;
+        animalNode->next = nullptr;
+
+        if (animal.cat)
+        {
+            if (catFirst == nullptr) { catFirst = animalNode; catLast = catFirst; }
+            else { catLast->next = animalNode; catLast = catLast->next; }
+        }
+        else
+        {
+            if (dogFirst == nullptr) { dogFirst = animalNode; dogLast = dogFirst; }
+            else { dogLast->next = animalNode; dogLast = dogLast->next; }
+        }
+    }
+
+    Animal dequeueAny()
+    {
+        if (dogLast == nullptr) return dequeueCat();
+        if (catLast == nullptr) return deququeDog();
+
+        if (dogFirst->num > catFirst->num) return dequeueCat();
+        else return deququeDog();
+    }
+
+    Animal dequeueCat()
+    {
+        Animal animal = catFirst->animal;
+        catFirst = catFirst->next;
+        if (catFirst == nullptr) { catLast = nullptr; }
+
+        return animal;
+    }
+
+    Animal deququeDog()
+    {
+        Animal animal = dogFirst->animal;
+        dogFirst = dogFirst->next;
+        if (dogFirst == nullptr) { dogLast = nullptr; }
+
+        return animal;
+    }
+};
+
+/* Animal Shelter - solution in the book.
+    Solution is same to my implementation.
+*/
+
 int main(void)
 {
     StackMin stackMin = StackMin();
@@ -359,6 +493,50 @@ int main(void)
         q.pop();
     }
     printf("\n");
+
+    Stack stackTarget = Stack();
+    stackTarget.push(3);
+    stackTarget.push(1);
+    stackTarget.push(4);
+    stackTarget.push(6);
+    stackTarget.push(7);
+    stackTarget.push(4);
+    stackTarget.push(9);
+    stackTarget.push(3);
+    stackTarget.push(2);
+    stackTarget.push(1);
+    stackTarget.push(8);
+
+    Stack stackHelp = Stack();
+
+    sortStack(stackTarget, stackHelp);
+
+    while (!stackTarget.empty())
+    {
+        printf("%d ", stackTarget.peak());
+        stackTarget.pop();
+    }
+
+    AnimalQueue animalQueue = AnimalQueue();
+    struct Animal dog1 = makeAnimal("waldog", false);
+    struct Animal dog2 = makeAnimal("sausagedog", false);
+    struct Animal dog3 = makeAnimal("dddog", false);
+    struct Animal cat1 = makeAnimal("catch", true);
+    struct Animal cat2 = makeAnimal("catsle", true);
+    struct Animal cat3 = makeAnimal("catab", true);
+
+    animalQueue.enqueue(cat1);
+    animalQueue.enqueue(dog1);
+    animalQueue.enqueue(dog2);
+    animalQueue.enqueue(dog3);
+    animalQueue.enqueue(cat2);
+    animalQueue.enqueue(cat3);
+
+    for (int i = 0; i < 3; ++ i)
+    {
+        Animal animal = animalQueue.deququeDog();
+        cout << animal.name << endl;
+    }
 
     return 0;
 }
